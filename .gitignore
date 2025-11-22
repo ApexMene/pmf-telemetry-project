@@ -6,6 +6,7 @@ __pycache__/
 .venv/
 venv/
 env/
+cache/
 .env
 
 .vscode/
@@ -25,3 +26,4 @@ dist/
 *.xlsx
 
 roadmap.md
+TODO.md

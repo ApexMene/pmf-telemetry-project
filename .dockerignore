@@ -4,6 +4,7 @@
 .venv/
 venv/
 env/
+cache/
 
 __pycache__/
 *.pyc
@@ -16,6 +17,7 @@ __pycache__/
 Thumbs.db
 
 README.md
+TODO.md
 roadmap.md
 docker-compose.yml
 Dockerfile
