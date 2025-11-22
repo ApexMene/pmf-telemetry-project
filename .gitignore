@@ -24,6 +24,9 @@ dist/
 *.log
 *.csv
 *.xlsx
+*.parquet
 
 roadmap.md
 TODO.md
+
+
