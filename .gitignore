@@ -25,6 +25,8 @@ dist/
 *.csv
 *.xlsx
 *.parquet
+*.pdf
+data/*.pdf
 
 roadmap.md
 TODO.md
