@@ -1,5 +1,5 @@
 import plotly.graph_objects as go
-import numpy as np
+import numpy as np  # noqa: F401
 
 
 def plot_3d_track(df):
