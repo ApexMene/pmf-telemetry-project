@@ -11,6 +11,8 @@ services:
       - ./src:/app/src
       # in caso di nuova telemetria non c'è bisogno di rifare immagine
       - ./data:/app/data 
+      # per il video della gui
+      - ./images:/app/images
     
     environment:
       - DATA_FILENAME=mugello_telemetry_2020_f1_LEC.parquet
