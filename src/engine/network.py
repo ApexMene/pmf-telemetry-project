@@ -21,9 +21,6 @@ APPLICATA AL MOTORSPORT:
 La funzione 'simulate_transfer' dimostra la differenza pratica:
 l'UDP è veloce ma introduce perdita dati -> Packet Loss, mentre il TCP garantisce l'integrità.
 
-
-! NOTE:
-Ho approfondito questo aspetto, ma non è parte utile del progetto
 """
 
 
@@ -38,7 +35,8 @@ def simulate_transfer(df, protocol, progress_bar, status_txt):
     received = []
     
     # configurazine protocollo
-    if protocol.lower().strip() == "TCP":
+    # meglio "in" che verificare uguale per robustezza
+    if "TCP" in protocol:
         delay, loss_prob = 0.02, 0.0
     else: # UDP
         delay, loss_prob = 0.003, 0.2
@@ -46,12 +44,18 @@ def simulate_transfer(df, protocol, progress_bar, status_txt):
     for i in range(total_chunks):
         time.sleep(delay)
         progress_bar.progress(i+1)
-        status_txt.text(f"Trasmesso pacchetto {i+1}/{total_chunks} via {protocol} . . .")
+        status_txt.text(f"Trasmesso pacchetto {i+1}/{total_chunks} via {protocol}...")
         
         if random.random() > loss_prob:
             start = i * chunk_size
-            end = None if i = 99 else (i+1) * chunk_size 
-            received.append(df.slice(start, chunk_size))
+            
+            # se ultimo giro, prendo fino alla fine
+            if i == total_chunks - 1:
+                chunk = df.slice(start, df.height - start) # prende il resto
+            else:
+                chunk = df.slice(start, chunk_size)
+                
+            received.append(chunk)
             
     if not received:
         return None, 0

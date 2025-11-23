@@ -8,6 +8,7 @@ WORKDIR /app
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
+ENV PYTHONPATH=/app
 
 COPY pyproject.toml uv.lock ./
 
@@ -17,6 +18,6 @@ RUN uv sync --frozen --no-install-project
 COPY . .
 
 # for streamlit. But to be defined later
-EXPOSE 8000 
+EXPOSE 8051
 
-CMD 
+CMD ["uv", "run", "streamlit", "run", "src/app.py", "--server.port=8501", "--server.address=0.0.0.0"]
