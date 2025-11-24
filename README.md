@@ -18,11 +18,12 @@
 
 È una suite completa per la gestione e l'analisi della telemetria, pensata per un ingegnere di pista che deve lavorare velocemente nel box.
 
-Il progetto tocca tre punti fondamentali che uniscono l'informatica alle corse:
+Il progetto tocca quattro punti fondamentali che uniscono l'informatica alle corse:
 
 1. **data offload (la rete):** simulazione dello scarico dati dalla centralina al pc.
 2. **data analysis (i dati):** visualizzazione e studio della telemetria (con dati reali).
 3. **infrastruttura (il deploy):** ambiente containerizzato e replicabile.
+4. **AI driving analysis (il machine learning):** classificazione non supervisionata dello stile di guida.
 
 ### Come ho ragionato
 
@@ -52,6 +53,20 @@ Poiché una f1 non è una moto, ho scritto un algoritmo di pulizia dati usando *
 * ho traslato le marce (da 8 a 6).
 * ho clippato i giri motore a 14.000 (limite regolamento cat. petrol).
 * **fisica inversa:** non avendo accelerometri nel dataset, ho derivato matematicamente le forze g (longitudinale e laterale) partendo dalla cinematica del gps per creare il diagramma g-g.
+
+#### 4. AI Driving Coach (Clustering K-Means)
+Non mi sono fermato alla fisica. Volevo un'analisi oggettiva dello stile di guida, qualcosa che andasse oltre il "sentimento" del pilota per trovare i decimi nascosti.
+
+**L'idea:** usare il clustering (un algoritmo di machine learning non supervisionato, il K-Means) per raggruppare i dati telemetrici in "fasi di guida" distinte. L'algoritmo non sa cosa sia una "staccata", ma analizzando variabili chiave come `velocità`, `throttle`, `freno` e `forze G`, crea dei cluster che corrispondono ai momenti precisi del giro.
+
+Il risultato è una mappa che colora ogni punto del tracciato in base alla fase di guida rilevata dall'AI:
+*   **Staccata Violenta**
+*   **Trail Braking**
+*   **Coasting (perdita di tempo)**
+*   **Accelerazione in uscita**
+*   **Full Gas**
+
+Questo permette all'ingegnere di vedere subito dove il pilota perde tempo (es. troppo *coasting* a centro curva) e confrontare i giri in modo oggettivo.
 
 ### Stack tecnologico
 
@@ -96,11 +111,12 @@ docker compose up --build
 
 It's a complete suite for telemetry management and analysis, designed for a track engineer who needs to work quickly in the pit box.
 
-The project touches three fundamental points that unite computer science with racing:
+The project touches four fundamental points that unite computer science with racing:
 
 1. **data offload (networking):** simulation of data download from the ecu to the pc.
 2. **data analysis (data):** visualization and study of telemetry (with real data).
 3. **infrastructure (deployment):** containerized and replicable environment.
+4. **AI driving analysis (machine learning):** unsupervised classification of driving style.
 
 ### How I reasoned
 
@@ -130,6 +146,20 @@ Since an f1 car is not a motorcycle, I wrote a data cleaning algorithm using **p
 * I shifted the gears (from 8 to 6).
 * I clipped the engine rpm to 14,000 (petrol category regulation limit).
 * **inverse physics:** not having accelerometers in the dataset, I mathematically derived the g-forces (longitudinal and lateral) starting from gps kinematics to create the g-g diagram.
+
+#### 4. AI Driving Coach (K-Means Clustering)
+I didn't stop at physics. I wanted an objective analysis of driving style, something that goes beyond the driver's "feel" to find those hidden tenths of a second.
+
+**The idea:** use clustering (an unsupervised machine learning algorithm, K-Means) to group telemetry data into distinct "driving phases". The algorithm doesn't know what "braking" is, but by analyzing key variables like `speed`, `throttle`, `brake`, and `G-forces`, it creates clusters that correspond to specific moments of the lap.
+
+The result is a map that colors each point of the track based on the driving phase detected by the AI:
+*   **Hard Braking**
+*   **Trail Braking**
+*   **Coasting (time loss)**
+*   **Corner Exit / Acceleration**
+*   **Full Throttle**
+
+This allows the engineer to immediately see where the driver is losing time (e.g., too much *coasting* mid-corner) and to compare laps objectively.
 
 ### Technology stack
 

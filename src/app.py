@@ -3,7 +3,7 @@ import time
 import base64
 from PIL import Image
 
-from src.engine import loader, network
+from src.engine import loader, network, ai_driving_analysis
 from src.graphics import maps, charts
 from src.utils.images64 import get_base64_image
 
@@ -107,7 +107,7 @@ if nav == "0. Perchè di questo progetto":
     st.title("PMF telemetry project - concept")
 
     c_text, c_vid = st.columns([0.65, 0.35], gap="medium")
-    
+
     with c_text:
         st.markdown("### About me")
         st.markdown("""
@@ -119,8 +119,7 @@ if nav == "0. Perchè di questo progetto":
         I motori non sono solo un hobby, sono la mia benzina. 
         Inoltre quest'anno ho deciso di coronare la passione con una **Triumph 765 RS** che potete vedere qui a destra: è lei che mi dà le vere soddisfazioni, mettendo in discussione le leggi della fisica.
         """)
-        
-        
+
     with c_vid:
         try:
             st.video("images/profile.mp4", autoplay=True, loop=True, muted=True)
@@ -128,16 +127,16 @@ if nav == "0. Perchè di questo progetto":
             st.info("video profilo non trovato (inserire images/profile.mp4)")
 
     st.markdown("---")
-    
+
     st.markdown("""
-        ### il progetto "redemption"
+        ### il progetto
         nel test scritto ho avuto incertezze su argomenti chiave come **tcp vs udp** e **nas**.
         
         tuttavia, guardando i grafici di telemetria e la mole di dati che una moto da corsa genera, ho realizzato che la **data analysis** (la parte "visibile") non può esistere senza una solida **infrastruttura** di trasporto (la parte "nascosta").
         
         non mi piace lasciare le cose a metà. ho passato gli ultimi 3 giorni a studiare e a costruire questa suite per dimostrare di aver colmato le lacune, unendo l'ingegneria del dato alla passione per la pista.
         """)
-    
+
     st.markdown("---")
 
     #  1. IL DATASET
@@ -365,15 +364,22 @@ elif nav == "2. Race analysis":
     st.title("debriefing tecnico")
 
     # tabs tematiche
-    tab0, tab1, tab2, tab3, tab4 = st.tabs(
-        ["0. velocità e marce", "1. integrità", "2. motore", "3. dinamica", "4. zoom"]
+    tab0, tab1, tab2, tab3, tab4, tab5 = st.tabs(
+        [
+            "0. velocità e marce",
+            "1. integrità",
+            "2. motore",
+            "3. dinamica",
+            "4. zoom",
+            "5. ai driving style",
+        ]
     )
 
     with tab0:
         st.markdown("#### velocità e marce nel circuito")
         st.caption("grafico andamento velocità fastlap")
         st.plotly_chart(charts.plot_track_map(df), use_container_width=True)
-        
+
     with tab1:
         st.markdown("#### coerenza sensori")
         st.caption("verifica correlazioni.")
@@ -400,3 +406,11 @@ elif nav == "2. Race analysis":
         st.markdown("#### deep dive: staccata san donato")
         st.markdown("analisi ritardo input pilota vs risposta meccanica.")
         st.plotly_chart(charts.plot_telemetry_zoom(df), use_container_width=True)
+
+    with tab5:
+        st.markdown("#### ai driving style analysis")
+        st.markdown("clustering fasi di guida")
+
+        df_dsa = ai_driving_analysis.analyze_driving_style(df)
+
+        st.plotly_chart(charts.plot_ai_driving_phases(df_dsa), use_container_width=True)

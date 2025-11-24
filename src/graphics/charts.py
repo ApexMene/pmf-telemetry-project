@@ -21,7 +21,7 @@ def plot_correlation_matrix(df):
         color_continuous_scale="RdBu_r", 
         aspect="auto", 
         template="plotly_dark",
-        title="Sensor Correlation Matrix"
+        title="Sensor correlation matrix"
     )
     return fig
 
@@ -34,7 +34,7 @@ def plot_rpm_distribution(df):
         nbins=100, 
         template="plotly_dark", 
         color_discrete_sequence=['#FFD700'],
-        title="Engine RPM Distribution"
+        title="Engine RPM distribution"
     )
     
     # Linea Limite Regolamento
@@ -42,7 +42,7 @@ def plot_rpm_distribution(df):
         x=REV_LIMIT_RPM, 
         line_dash="dash", 
         line_color="red", 
-        annotation_text=f"Rev Limit ({REV_LIMIT_RPM})"
+        annotation_text=f"Rev limit ({REV_LIMIT_RPM})"
     )
 
     # media 
@@ -66,7 +66,7 @@ def plot_gear_ratios(df):
         color="nGear", 
         template="plotly_dark",
         points="outliers",
-        title="Gear Ratio Analysis"
+        title="Gear ratio analysis"
     )
     fig.update_layout(showlegend=False, xaxis_title="Gear", yaxis_title="Speed (km/h)")
     return fig
@@ -83,7 +83,7 @@ def plot_engine_heatmap(df):
         nbinsx=30, nbinsy=20, 
         color_continuous_scale="Hot", 
         template="plotly_dark",
-        title="Engine Calibration Map (RPM vs Throttle)"
+        title="Engine calibration map (RPM vs Throttle)"
     )
     return fig
 
@@ -125,7 +125,7 @@ def plot_telemetry_zoom(df):
         height=800, 
         template="plotly_dark", 
         hovermode="x unified",
-        title="Deep Dive: San Donato Braking Zone"
+        title="Deep dive: San Donato braking zone"
     )
     
     return fig
@@ -242,4 +242,72 @@ def plot_track_map(df, color_by="Speed", title="Track map"):
         )
     )
 
+    return fig
+
+
+def plot_ai_driving_phases(df):
+    phase_config = {
+        "5. Full Gas": "#00FF00",           
+        "1. Staccata": "#FF0000",  
+        "2. Trail Braking": "#FFA500",      
+        "3. COASTING (Time Loss)": "#00FFFF", 
+        "4. Uscita / Accelerazione": "#FFFF00" 
+    }
+    
+    sorted_phases = sorted(list(phase_config.keys()))
+    
+    fig = go.Figure()
+
+    fig.add_trace(go.Scatter(
+        x=df["X"].to_numpy(),
+        y=df["Y"].to_numpy(),
+        mode='lines',
+        line=dict(color='#333333', width=4), #
+        hoverinfo='skip',
+        name='Tracciato Base'
+    ))
+
+    for phase in sorted_phases:
+        subset = df.filter(pl.col("Driving_Phase") == phase)
+        
+        if not subset.is_empty():
+            hover_data = np.stack((
+                subset["Speed"].to_numpy(), 
+                subset["nGear"].to_numpy(), 
+                subset["RPM"].to_numpy()
+            ), axis=-1)
+
+            fig.add_trace(go.Scatter(
+                x=subset["X"].to_numpy(),
+                y=subset["Y"].to_numpy(),
+                mode='markers',
+                name=phase,
+                marker=dict(
+                    size=5, 
+                    color=phase_config.get(phase, "gray") 
+                ),
+                customdata=hover_data,
+                hovertemplate="<b>%{text}</b><br>" +
+                              "Speed: %{customdata[0]:.0f} km/h<br>" +
+                              "Gear: %{customdata[1]}<br>" +
+                              "RPM: %{customdata[2]:.0f}<extra></extra>",
+                text=subset["Driving_Phase"].to_numpy()
+            ))
+
+    fig.update_layout(
+        title="Mappa fasi di guida (powered by AI Driving Analysis)",
+        template="plotly_dark", 
+        xaxis=dict(visible=False, showgrid=False), 
+        yaxis=dict(visible=False, showgrid=False, scaleanchor="x", scaleratio=1),
+        legend=dict(
+            title="Fase rilevata",
+            yanchor="top", y=0.99,
+            xanchor="left", x=0.01,
+            bgcolor="rgba(0,0,0,0.5)"
+        ),
+        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)",
+        height=800
+    )
+    
     return fig
