@@ -26,7 +26,7 @@ def plot_correlation_matrix(df):
     return fig
 
 def plot_rpm_distribution(df):
-    """Istogramma utilizzo motore con linea limitatore."""
+    """Istogramma utilizzo motore con linea limitatore e media."""
     
     fig = px.histogram(
         df, 
@@ -43,6 +43,16 @@ def plot_rpm_distribution(df):
         line_dash="dash", 
         line_color="red", 
         annotation_text=f"Rev Limit ({REV_LIMIT_RPM})"
+    )
+
+    # media 
+    mean_rpm = df["RPM"].mean()
+    fig.add_vline(
+        x=mean_rpm, 
+        line_dash="dot", 
+        line_color="cyan", 
+        annotation_text=f"Avg RPM: {int(mean_rpm)}",
+        annotation_position="bottom left"
     )
     return fig
 
