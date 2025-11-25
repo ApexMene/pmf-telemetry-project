@@ -2,10 +2,18 @@ import streamlit as st
 import time
 import base64
 from PIL import Image
+from pathlib import Path
 
 from src.engine import loader, network, ai_driving_analysis
 from src.graphics import maps, charts
 from src.utils.images64 import get_base64_image
+from src.utils.data_import import load_data_sample
+from config.settings import config_pmf_object as config_pmf
+
+DATA_PATH = config_pmf.DATA_PATH
+
+# # scarica i dati senza dover avviare il notebook -> NON SERVE SICCOME LO SCARICO NELLA BUILD DEL CONTAINER -> altrimenti si vedrebbe streamlit nera per 2 minuti -> non bello
+# load_data_sample()
 
 # CONFIGURAZIONE PAGINA
 st.set_page_config(
@@ -28,6 +36,20 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+# download asincrono background
+if not DATA_PATH.exists():
+    st.markdown("***")
+    st.warning("Dataset not found.")
+    
+    with st.spinner("Download data... Wait 1/2 minuts untill done"):
+        try:
+            load_data_sample()
+            st.success("Dataset loaded successfully")
+            time.sleep(1)
+            st.rerun()
+        except Exception as e:
+            st.error(f"Error while downloading: {e}")
+            st.stop()
 
 # loghi e contatti
 try:
