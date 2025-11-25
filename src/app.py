@@ -396,11 +396,11 @@ elif nav == "2. Race analysis":
         c1, c2 = st.columns(2)
         with c1:
             st.plotly_chart(charts.plot_engine_heatmap(df), use_container_width=True)
-        with c2:
-            st.plotly_chart(charts.g_force_chart(df), use_container_width=True)
-            st.info(
-                "ℹ️ **friction circle:** accelerazioni derivate matematicamente dal gps."
-            )
+        # with c2:
+        #     st.plotly_chart(charts.g_force_chart(df), use_container_width=True)
+        #     st.info(
+        #         "ℹ️ **friction circle:** accelerazioni derivate matematicamente dal gps."
+        #     )
 
     with tab4:
         st.markdown("#### deep dive: staccata san donato")
