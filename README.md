@@ -1,10 +1,10 @@
-<div align="center">
+<!-- <div align="center">
   <img src="./images/image.png" alt="PMF Logo" width="200">
   <h1>pmf telemetry project</h1>
   <p><strong>candidato:</strong> gianluca meneghetti</p>
 </div>
 
----
+--- -->
 
 ## 🇮🇹 Versione Italiana
 
